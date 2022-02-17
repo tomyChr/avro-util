@@ -1,7 +1,6 @@
 package ch.ichristen.avroUtil.serde;
 
 import ch.ichristen.avroUtil.serde.compress.DecompressorFactory;
-import ch.ichristen.avroUtil.serde.depricated.AvroDeserializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.Schema;
 import org.apache.avro.io.Decoder;
@@ -22,63 +21,6 @@ public class JsonAvroDeserializer<T extends SpecificRecord> extends AbstractAvro
 
     public JsonAvroDeserializer(DecompressorFactory decompressorFactory) {
         super(decompressorFactory);
-    }
-
-    Collection<T> deserializeCollectionOld(byte[] data, Class<? extends T> clazz, Schema schema, SpecificDatumReader<T> datumReader) throws IOException {
-        final ArrayList<T> resultList = new ArrayList<>();
-        int i = 0;
-        int startRecord = 0;
-        int openCount = 0;
-//////////////////////////////////////////////////////////////////////
-//        O L D  V E R S I O N  !!!!!!!!!!!!
-//////////////////////////////////////////////////////////////////////
-        ParserStatus parserStatus = ParserStatus.NA;
-        while (i < data.length) {
-            if (parserStatus == ParserStatus.NA) {
-                if (data[i] == '[') {
-                    parserStatus = ParserStatus.ARRAY;
-                }
-            } else if (parserStatus == ParserStatus.ARRAY) {
-                if (data[i] == '{') {
-                    parserStatus = ParserStatus.RECORD;
-                    openCount = 1;
-                    startRecord = i;
-                    // } else if (data[i] == ',') {
-                    // ignore
-                } else if (data[i] == ']') {
-                    parserStatus = ParserStatus.NA;
-                }
-            } else {  // parserStatus == ParserStatus.RECORD
-                if (data[i] == '}') {
-                    openCount--;
-                    if (openCount == 0) {
-                        // now carve out the part start - i+1 and use a datumReader to create avro object
-                        try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data, startRecord, i - startRecord + 1)) {
-                            if (log.isDebugEnabled()) {
-                                byteArrayInputStream.mark(0);
-                                log.debug("Record for parser '{}'", new String(byteArrayInputStream.readAllBytes()));
-                                byteArrayInputStream.reset();
-                            }
-                            final Decoder decoder = getDecoder(schema, byteArrayInputStream);
-                            final SpecificRecord avroRecord = datumReader.read(null, decoder);
-                            if (log.isDebugEnabled()) {
-                                log.debug("Avro object = {} : {}", clazz.getName(), avroRecord);
-                            }
-                            // add it to the collection
-                            resultList.add((T) avroRecord);
-                        }
-                        parserStatus = ParserStatus.ARRAY;
-                    }
-                } else if (data[i] == '{') {
-                    openCount++;
-                }
-            }
-            i++;
-        }
-        if (parserStatus != ParserStatus.NA) {
-            log.warn("Malformed json input '{}'", new String(data));
-        }
-        return resultList;
     }
 
     Collection<T> deserializeCollection(byte[] data, Class<? extends T> clazz, Schema schema, SpecificDatumReader<T> datumReader) throws IOException {

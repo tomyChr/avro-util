@@ -4,6 +4,7 @@ import ch.ichristen.avroUtil.model.InnerClass;
 import ch.ichristen.avroUtil.model.TestEnum;
 import ch.ichristen.avroUtil.model.TestObjectChild;
 import ch.ichristen.avroUtil.model.TestObjectParent;
+import ch.ichristen.avroUtil.serde.compress.CompressorType;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,7 @@ public class JasonSerdeTest {
     @Test
     public void testSingleSpecificJsonSerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.jsonSerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.JSON, CompressorType.NONE);
         final TestObjectParent testObject = buildTestObject(0);
         byte[] result = null;
         try {
@@ -42,7 +43,7 @@ public class JasonSerdeTest {
         }
 
         TestObjectParent resultObject = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.jsonDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.JSON, CompressorType.NONE);
         if (result != null) {
             try {
                 resultObject = deser.deserialize(TestObjectParent.class, result);
@@ -58,7 +59,7 @@ public class JasonSerdeTest {
     @Test
     public void testCollectionSpecificJsonSerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.jsonSerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.JSON, CompressorType.NONE);
         final ArrayList<TestObjectParent> testObjects = new ArrayList<>();
         testObjects.add(buildTestObject(0));
         testObjects.add(buildTestObject(1));
@@ -74,7 +75,7 @@ public class JasonSerdeTest {
         }
 
         Collection<TestObjectParent> resultObjects = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.jsonDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.JSON, CompressorType.NONE);
         if (result != null) {
             try {
                 resultObjects = deser.deserializeCollection(TestObjectParent.class, result);
@@ -91,7 +92,7 @@ public class JasonSerdeTest {
     @Test
     public void testSingleSpecificDeflaterJsonSerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.jsonDeflaterSerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.JSON, CompressorType.DEFLATER);
         final TestObjectParent testObject = buildTestObject(0);
         byte[] result = null;
         try {
@@ -103,7 +104,7 @@ public class JasonSerdeTest {
         }
 
         TestObjectParent resultObject = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.jsonInflaterDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.JSON, CompressorType.DEFLATER);
         if (result != null) {
             try {
                 resultObject = deser.deserialize(TestObjectParent.class, result);
@@ -119,7 +120,7 @@ public class JasonSerdeTest {
     @Test
     public void testCollectionSpecificDeflaterJsonSerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.jsonDeflaterSerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.JSON, CompressorType.DEFLATER);
         final ArrayList<TestObjectParent> testObjects = new ArrayList<>();
         testObjects.add(buildTestObject(0));
         testObjects.add(buildTestObject(1));
@@ -135,7 +136,7 @@ public class JasonSerdeTest {
         }
 
         Collection<TestObjectParent> resultObjects = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.jsonInflaterDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.JSON, CompressorType.DEFLATER);
         if (result != null) {
             try {
                 resultObjects = deser.deserializeCollection(TestObjectParent.class, result);
@@ -152,7 +153,7 @@ public class JasonSerdeTest {
     @Test
     public void testSingleSpecificGZIPJsonSerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.jsonGZIPSerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.JSON, CompressorType.GZIP);
         final TestObjectParent testObject = buildTestObject(0);
         byte[] result = null;
         try {
@@ -164,7 +165,7 @@ public class JasonSerdeTest {
         }
 
         TestObjectParent resultObject = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.jsonGZIPDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.JSON, CompressorType.GZIP);
         if (result != null) {
             try {
                 resultObject = deser.deserialize(TestObjectParent.class, result);
@@ -180,7 +181,7 @@ public class JasonSerdeTest {
     @Test
     public void testCollectionSpecificGZIPJsonSerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.jsonGZIPSerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.JSON, CompressorType.GZIP);
         final ArrayList<TestObjectParent> testObjects = new ArrayList<>();
         testObjects.add(buildTestObject(0));
         testObjects.add(buildTestObject(1));
@@ -196,7 +197,7 @@ public class JasonSerdeTest {
         }
 
         Collection<TestObjectParent> resultObjects = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.jsonGZIPDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.JSON, CompressorType.GZIP);
         if (result != null) {
             try {
                 resultObjects = deser.deserializeCollection(TestObjectParent.class, result);

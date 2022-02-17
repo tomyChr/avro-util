@@ -1,5 +1,6 @@
 package ch.ichristen.avroUtil.serde;
 
+import ch.ichristen.avroUtil.serde.compress.CompressorType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,7 +32,7 @@ public class BinarySerdeTest {
     @Test
     public void testSingleSpecificBinarySerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.binarySerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.BINARY, CompressorType.NONE);
 
         final TestObjectParent testObject = buildTestObject(0);
         byte[] result = null;
@@ -44,7 +45,7 @@ public class BinarySerdeTest {
         }
 
         TestObjectParent resultObject = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.binaryDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.BINARY, CompressorType.NONE);
         if (result != null) {
             try {
                 resultObject = deser.deserialize(TestObjectParent.class, result);
@@ -60,7 +61,7 @@ public class BinarySerdeTest {
     @Test
     public void testSingleSpecificDeflaterBinarySerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.binaryDeflaterSerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.BINARY, CompressorType.DEFLATER);
 
         final TestObjectParent testObject = buildTestObject(0);
         byte[] result = null;
@@ -73,7 +74,7 @@ public class BinarySerdeTest {
         }
 
         TestObjectParent resultObject = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.binaryInflaterDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.BINARY, CompressorType.DEFLATER);
         if (result != null) {
             try {
                 resultObject = deser.deserialize(TestObjectParent.class, result);
@@ -89,7 +90,7 @@ public class BinarySerdeTest {
     @Test
     public void testSingleSpecificGZIPBinarySerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.binaryGZIPSerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.BINARY, CompressorType.GZIP);
 
         final TestObjectParent testObject = buildTestObject(0);
         byte[] result = null;
@@ -102,7 +103,7 @@ public class BinarySerdeTest {
         }
 
         TestObjectParent resultObject = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.binaryGZIPDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.BINARY, CompressorType.GZIP);
         if (result != null) {
             try {
                 resultObject = deser.deserialize(TestObjectParent.class, result);
@@ -118,7 +119,7 @@ public class BinarySerdeTest {
     @Test
     public void testCollectionSpecificBinarySerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.binarySerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.BINARY, CompressorType.NONE);
 
         final ArrayList<TestObjectParent> testObjects = new ArrayList<>();
         testObjects.add(buildTestObject(0));
@@ -135,7 +136,7 @@ public class BinarySerdeTest {
         }
 
         Collection<TestObjectParent> resultObjects = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.binaryDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.BINARY, CompressorType.NONE);
         if (result != null) {
             try {
                 resultObjects = deser.deserializeCollection(TestObjectParent.class, result);
@@ -151,7 +152,7 @@ public class BinarySerdeTest {
     @Test
     public void testCollectionSpecificDeflaterBinarySerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.binaryDeflaterSerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.BINARY, CompressorType.DEFLATER);
 
         final ArrayList<TestObjectParent> testObjects = new ArrayList<>();
         testObjects.add(buildTestObject(0));
@@ -168,7 +169,7 @@ public class BinarySerdeTest {
         }
 
         Collection<TestObjectParent> resultObjects = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.binaryInflaterDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.BINARY, CompressorType.DEFLATER);
         if (result != null) {
             try {
                 resultObjects = deser.deserializeCollection(TestObjectParent.class, result);
@@ -184,7 +185,7 @@ public class BinarySerdeTest {
     @Test
     public void testCollectionSpecificGZIPBinarySerde() {
 
-        Serializer<TestObjectParent> ser = serializerFactory.binaryGZIPSerializer();
+        Serializer<TestObjectParent> ser = serializerFactory.serializer(AvroFormat.BINARY, CompressorType.GZIP);
 
         final ArrayList<TestObjectParent> testObjects = new ArrayList<>();
         testObjects.add(buildTestObject(0));
@@ -201,7 +202,7 @@ public class BinarySerdeTest {
         }
 
         Collection<TestObjectParent> resultObjects = null;
-        Deserializer<TestObjectParent> deser = deserializerFactory.binaryGZIPDeserializer();
+        Deserializer<TestObjectParent> deser = deserializerFactory.deserializer(AvroFormat.BINARY, CompressorType.GZIP);
         if (result != null) {
             try {
                 resultObjects = deser.deserializeCollection(TestObjectParent.class, result);
