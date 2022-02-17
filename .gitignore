@@ -1,2 +1,7 @@
+# Intellij Idea configuration
+.idea/
+*.iml
+
 # Project exclude paths
 /target/
+/src/main/java/ch.ichristen.avroUtil/serde/depricated/
