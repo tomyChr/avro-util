@@ -1,0 +1,38 @@
+[
+  {
+    "type": "record",
+    "namespace": "ch.ichristen.avroUtil.model",
+    "name": "TestObjectChild",
+    "doc": "Test Object with basic AVRO types",
+    "fields": [
+      { "name": "testString", "type": "string"},
+      { "name": "testInt", "type": "int"},
+      { "name": "testLong", "type": "long"},
+      { "name": "testFloat", "type": "float"},
+      { "name": "testDouble", "type": "double"},
+      { "name": "testBoolean", "type": "boolean", "default": false},
+      { "name": "testBytes", "type": "bytes"}
+    ]
+  },
+
+
+  {
+    "type": "record",
+    "namespace": "ch.ichristen.avroUtil.model",
+    "name": "TestObjectParent",
+    "doc": "Test Object with structural and more complex types",
+    "fields": [
+      {"name":"testPrimitives", "type": "ch.ichristen.avroUtil.model.TestObjectChild"},
+      {"name": "testString", "type": "string"},
+      {"name": "testEnum", "type": {"name": "TestEnum", "type": "enum", "symbols": ["YES", "NO", "NONE"]}},
+      {"name": "testUnion", "type": ["null", "double"], "default": null},
+      {"name": "testMap", "type": {"type": "map", "values": "float"}},
+      {"name": "testList", "type":
+      {"type": "array", "items":
+      {"name": "InnerClass", "type": "record", "fields":
+      [{"name": "testName", "type": "string"}, {"name": "testId", "type": "long"}]}
+      }
+      }
+    ]
+  }
+]
