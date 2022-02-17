@@ -12,7 +12,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <avro.version>1.11.0</avro.version>
+        <apache.avro.version>1.11.0</apache.avro.version>
     </properties>
 
     <dependencies>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>${avro.version}</version>
+            <version>${apache.avro.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -100,7 +100,7 @@
             <plugin>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
-                <version>${avro.version}</version>
+                <version>${apache.avro.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
