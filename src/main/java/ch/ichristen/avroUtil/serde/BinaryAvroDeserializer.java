@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Slf4j
-public class BinaryAvroDeserializer<T extends SpecificRecord> extends AbstractAvroDeserializer<T> {
+public class BinaryAvroDeserializer extends AbstractAvroDeserializer {
 
     public BinaryAvroDeserializer() { super(); }
 
@@ -26,8 +26,8 @@ public class BinaryAvroDeserializer<T extends SpecificRecord> extends AbstractAv
     }
 
     @Override
-    Collection<T> deserializeCollection(byte[] data, Class<? extends T> clazz, Schema schema, SpecificDatumReader<T> datumReader) throws IOException {
-        final ArrayList<T> resultList = new ArrayList<>();
+    ArrayList<SpecificRecord> deserializeCollection(byte[] data, Class<? extends SpecificRecord> clazz, Schema schema, SpecificDatumReader<SpecificRecord> datumReader) throws IOException {
+        final ArrayList<SpecificRecord> resultList = new ArrayList<>();
 
         FilterInputStream compressorInputStream = null;
         try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data)) {
@@ -39,7 +39,7 @@ public class BinaryAvroDeserializer<T extends SpecificRecord> extends AbstractAv
                 if (log.isDebugEnabled()) {
                     log.debug("Avro object = {} : {}", clazz.getName(), avroRecord);
                 }
-                resultList.add((T) avroRecord);
+                resultList.add(avroRecord);
             }
             return resultList;
         }

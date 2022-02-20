@@ -6,26 +6,26 @@ import org.apache.avro.specific.SpecificRecord;
 import java.util.zip.*;
 
 
-public class AvroDeserializerFactory<T extends SpecificRecord> {
+public class AvroDeserializerFactory {
 
-    public Deserializer<T> deserializer(AvroFormat avroFormat, CompressorType compressorType) {
+    public Deserializer deserializer(AvroFormat avroFormat, CompressorType compressorType) {
         if (avroFormat == AvroFormat.BINARY) {
             if (compressorType == CompressorType.NONE) {
-                return new BinaryAvroDeserializer<T>();
+                return new BinaryAvroDeserializer();
             } else if (compressorType == CompressorType.GZIP) {
-                return new BinaryAvroDeserializer<T>(GZIPInputStream::new);
+                return new BinaryAvroDeserializer(GZIPInputStream::new);
             } else if (compressorType == CompressorType.DEFLATER) {
-                return new BinaryAvroDeserializer<T>(InflaterInputStream::new);
+                return new BinaryAvroDeserializer(InflaterInputStream::new);
             } else {
                 throw new IllegalArgumentException("Unsupported compressor type");
             }
         } else if (avroFormat == AvroFormat.JSON) {
             if (compressorType == CompressorType.NONE) {
-                return new JsonAvroDeserializer<T>();
+                return new JsonAvroDeserializer();
             } else if (compressorType == CompressorType.GZIP) {
-                return new JsonAvroDeserializer<T>(GZIPInputStream::new);
+                return new JsonAvroDeserializer(GZIPInputStream::new);
             } else if (compressorType == CompressorType.DEFLATER) {
-                return new JsonAvroDeserializer<T>(InflaterInputStream::new);
+                return new JsonAvroDeserializer(InflaterInputStream::new);
             } else {
                 throw new IllegalArgumentException("Unsupported compressor type");
             }

@@ -8,7 +8,7 @@ import org.apache.avro.specific.SpecificRecord;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class AvroJsonSerializer<T extends SpecificRecord> extends AbstractAvroSerializer<T> {
+public class AvroJsonSerializer extends AbstractAvroSerializer {
 
 
     public AvroJsonSerializer() {
@@ -20,7 +20,7 @@ public class AvroJsonSerializer<T extends SpecificRecord> extends AbstractAvroSe
     }
 
     @Override
-    Encoder getEncoder(T data, OutputStream outputStream) throws IOException {
+    Encoder getEncoder(SpecificRecord data, OutputStream outputStream) throws IOException {
         return EncoderFactory.get().jsonEncoder(data.getSchema(), outputStream);
     }
 

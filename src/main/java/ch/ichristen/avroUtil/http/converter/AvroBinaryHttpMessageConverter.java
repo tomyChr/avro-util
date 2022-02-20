@@ -7,7 +7,15 @@ import ch.ichristen.avroUtil.serde.compress.CompressorType;
 import org.apache.avro.specific.SpecificRecord;
 import org.springframework.http.MediaType;
 
-public class AvroBinaryHttpMessageConverter<T extends SpecificRecord> extends AbstractAvroHttpMessageConverter<T> {
+/**
+ * HttpMessageConverter class for AVRO using AVRO binary data exchange.
+ *
+ * <p>This class adds support reading and writing AVRO binary SpecificRecord AVRO objects
+ *
+ * @author Thomas Christen
+ * @param <T> the converted object type
+ */
+public class AvroBinaryHttpMessageConverter<T extends Object> extends AbstractAvroHttpMessageConverter<T> {
 
     protected static final String AVRO_BINARY_SUBTYPE = "avro";
     protected static final String AVRO_ANY_BINARY_SUBTYPE = "*+avro";
@@ -20,9 +28,23 @@ public class AvroBinaryHttpMessageConverter<T extends SpecificRecord> extends Ab
     public static final String AVRO_BINARY_GZIP = APPLICATION + "/" + AVRO_BINARY_GZIP_SUBTYPE;
     public static final String AVRO_BINARY_DEFLATE = APPLICATION + "/" + AVRO_BINARY_DEFLATE_SUBTYPE;
 
+    /**
+     * Create a new AvroBinaryHttpMessageConverter with preconfigured serializer and deserializer for binary data exchange.
+     * Compression is disabled.
+     */
+    public AvroBinaryHttpMessageConverter() {
+        super(  new AvroSerializerFactory().serializer(AvroFormat.BINARY, CompressorType.NONE),
+                new AvroDeserializerFactory().deserializer(AvroFormat.BINARY, CompressorType.NONE),
+                new MediaType(APPLICATION, acceptContentHeader(CompressorType.NONE), DEFAULT_CHARSET));
+    }
+
+    /**
+     * Create a new AvroJsonHttpMessageConverter with preconfigured serializer and deserializer for binary data exchange.
+     * @param compressorType the selected {@link CompressorType} type
+     */
     public AvroBinaryHttpMessageConverter(CompressorType compressorType) {
-        super(  new AvroSerializerFactory<>().serializer(AvroFormat.BINARY, compressorType),
-                new AvroDeserializerFactory<>().deserializer(AvroFormat.BINARY, compressorType),
+        super(  new AvroSerializerFactory().serializer(AvroFormat.BINARY, compressorType),
+                new AvroDeserializerFactory().deserializer(AvroFormat.BINARY, compressorType),
                 new MediaType(APPLICATION, acceptContentHeader(compressorType), DEFAULT_CHARSET));
     }
 

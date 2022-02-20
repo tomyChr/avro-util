@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Slf4j
-public class JsonAvroDeserializer<T extends SpecificRecord> extends AbstractAvroDeserializer<T> {
+public class JsonAvroDeserializer extends AbstractAvroDeserializer {
 
     protected enum ParserStatus { NA, ARRAY, RECORD };
 
@@ -23,8 +23,9 @@ public class JsonAvroDeserializer<T extends SpecificRecord> extends AbstractAvro
         super(decompressorFactory);
     }
 
-    Collection<T> deserializeCollection(byte[] data, Class<? extends T> clazz, Schema schema, SpecificDatumReader<T> datumReader) throws IOException {
-        final ArrayList<T> resultList = new ArrayList<>();
+    @Override
+    ArrayList<SpecificRecord> deserializeCollection(byte[] data, Class<? extends SpecificRecord> clazz, Schema schema, SpecificDatumReader<SpecificRecord> datumReader) throws IOException {
+        final ArrayList<SpecificRecord> resultList = new ArrayList<>();
         FilterInputStream compressorInputStream = null;
         InputStream inputStream;
 
@@ -65,7 +66,7 @@ public class JsonAvroDeserializer<T extends SpecificRecord> extends AbstractAvro
                                     log.debug("Avro object = {} : {}", clazz.getName(), avroRecord);
                                 }
                                 // add it to the collection
-                                resultList.add((T) avroRecord);
+                                resultList.add(avroRecord);
                             }
                             // reset the outputStream to be ready for the next record
                             byteArrayOutputStream.reset();

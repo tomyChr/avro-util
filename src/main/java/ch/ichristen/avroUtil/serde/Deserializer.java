@@ -16,29 +16,32 @@
 
 package ch.ichristen.avroUtil.serde;
 
+import org.apache.avro.specific.SpecificRecord;
+
 import java.util.Collection;
 
 /**
  * Generic deserialization.
- * 
+ *
+ * @author Thomas Christen
  * @author Björn Beskow
  */
-public interface Deserializer<T> {
+public interface Deserializer {
 
   /**
    * Deserialize object from a byte array.
    * @param clazz the expected class for the deserialized object
    * @param data the byte array
-   * @return T object instance
+   * @return Object instance of type clazz
    */
-  T deserialize(Class<? extends T> clazz, byte[] data) throws SerializationException;
+  Object deserialize(Class clazz, byte[] data) throws SerializationException;
 
   /**
    * Deserialize objects from a byte array into a collection
    * @param clazz the expected class for the deserialized object
    * @param data the byte array
-   * @return Collection<T> object instance
+   * @return Collection object instance
    */
-  Collection<T> deserializeCollection(Class<? extends T> clazz, byte[] data) throws SerializationException;
+  Collection<SpecificRecord> deserializeCollection(Class<? extends SpecificRecord> clazz, byte[] data) throws SerializationException;
 
-  }
+}

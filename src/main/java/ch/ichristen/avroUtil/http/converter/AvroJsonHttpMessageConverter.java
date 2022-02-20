@@ -7,7 +7,15 @@ import ch.ichristen.avroUtil.serde.compress.CompressorType;
 import org.apache.avro.specific.SpecificRecord;
 import org.springframework.http.MediaType;
 
-public class AvroJsonHttpMessageConverter<T extends SpecificRecord> extends AbstractAvroHttpMessageConverter<T> {
+/**
+ * HttpMessageConverter class for AVRO using JSON data exchange.
+ *
+ * <p>This class adds support reading and writing JSON SpecificRecord AVRO objects
+ *
+ * @author Thomas Christen
+ * @param <T> the converted object type
+ */
+public class AvroJsonHttpMessageConverter<T extends Object> extends AbstractAvroHttpMessageConverter<T> {
 
     protected static final String AVRO_JSON_SUBTYPE = "avro+json";
     protected static final String AVRO_ANY_JSON_SUBTYPE = "*+avro+json";
@@ -20,9 +28,24 @@ public class AvroJsonHttpMessageConverter<T extends SpecificRecord> extends Abst
     public static final String AVRO_JSON_GZIP = APPLICATION + "/" + AVRO_JSON_GZIP_SUBTYPE;
     public static final String AVRO_JSON_DEFLATE = APPLICATION + "/" + AVRO_JSON_DEFLATE_SUBTYPE;
 
+
+    /**
+     * Create a new AvroJsonHttpMessageConverter with preconfigured serializer and deserializer for JSON data exchange.
+     * Compression is disabled.
+     */
+    public AvroJsonHttpMessageConverter() {
+        super(  new AvroSerializerFactory().serializer(AvroFormat.JSON, CompressorType.NONE),
+                new AvroDeserializerFactory().deserializer(AvroFormat.JSON, CompressorType.NONE),
+                new MediaType(APPLICATION, acceptContentHeader(CompressorType.NONE), DEFAULT_CHARSET));
+    }
+
+    /**
+     * Create a new AvroJsonHttpMessageConverter with preconfigured serializer and deserializer for JSON data exchange.
+     * @param compressorType the selected {@link CompressorType} type
+     */
     public AvroJsonHttpMessageConverter(CompressorType compressorType) {
-        super(  new AvroSerializerFactory<>().serializer(AvroFormat.JSON, compressorType),
-                new AvroDeserializerFactory<>().deserializer(AvroFormat.JSON, compressorType),
+        super(  new AvroSerializerFactory().serializer(AvroFormat.JSON, compressorType),
+                new AvroDeserializerFactory().deserializer(AvroFormat.JSON, compressorType),
                 new MediaType(APPLICATION, acceptContentHeader(compressorType), DEFAULT_CHARSET));
     }
 

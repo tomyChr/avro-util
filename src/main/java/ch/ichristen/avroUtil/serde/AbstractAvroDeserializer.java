@@ -9,8 +9,9 @@ import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificRecord;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * Provides deserialization from a byte array to an Avro object
@@ -18,7 +19,7 @@ import java.util.Collection;
  * @author Thomas Christen
  */
 @Slf4j
-public abstract class AbstractAvroDeserializer<T extends SpecificRecord> implements Deserializer<T> {
+public abstract class AbstractAvroDeserializer implements Deserializer {
 
     final DecompressorFactory decompressorFactory;
 
@@ -39,15 +40,29 @@ public abstract class AbstractAvroDeserializer<T extends SpecificRecord> impleme
      *                                    I/O operations with data and signals that some other
      *                                    deserialization exception has occurred.
      */
-    public T deserialize(final Class<? extends T> clazz, final byte[] data) throws SerializationException {
+    public Object deserialize(final Class clazz, final byte[] data) throws SerializationException {
+        if (clazz == null) {
+            throw new SerializationException("Unable to derive SpecificRecord from provided class parameter (null)");
+        }
+        if (clazz.isArray() && SpecificRecord.class.isAssignableFrom(clazz.componentType())) {
+            ArrayList arrayList = (ArrayList) deserializeCollection(clazz.componentType(), data);
+            return arrayList != null ? arrayList.toArray((SpecificRecord[])Array.newInstance(clazz.getComponentType(), arrayList.size())) : null;
+        }
+        if (SpecificRecord.class.isAssignableFrom(clazz)) {
+            return deserializeSpecificRecord(clazz, data);
+        }
+        throw new SerializationException("Unsupported result class ("+ clazz + "). Currently only SpecificRecord or SpecificRecord[] is supported.");
+    }
+
+    SpecificRecord deserializeSpecificRecord(final Class<SpecificRecord> clazz, final byte[] data) throws SerializationException {
         try {
-            T result = null;
+            SpecificRecord result = null;
             if (data != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("data = ({})", new String(data));
                 }
                 final Schema schema = clazz.getDeclaredConstructor().newInstance().getSchema();
-                final DatumReader<T> datumReader = new SpecificDatumReader<>(schema);
+                final DatumReader<SpecificRecord> datumReader = new SpecificDatumReader<>(schema);
                 FilterInputStream compressorInputStream = null;
                 try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data)) {
                     compressorInputStream = (decompressorFactory != null) ? decompressorFactory.getDecompressor(byteArrayInputStream) : null;
@@ -64,14 +79,14 @@ public abstract class AbstractAvroDeserializer<T extends SpecificRecord> impleme
         }
     }
 
-    public Collection<T> deserializeCollection(final Class<? extends T> clazz, final byte[] data) throws SerializationException {
+    public Collection<SpecificRecord> deserializeCollection(final Class<? extends SpecificRecord> clazz, final byte[] data) throws SerializationException {
         try {
             if (data != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("data = ({})", new String(data));
                 }
                 final Schema schema = clazz.getDeclaredConstructor().newInstance().getSchema();
-                final SpecificDatumReader<T> datumReader = new SpecificDatumReader<>(schema);
+                final SpecificDatumReader<SpecificRecord> datumReader = new SpecificDatumReader<>(schema);
 
                 return deserializeCollection(data, clazz, schema, datumReader);
             }
@@ -81,7 +96,7 @@ public abstract class AbstractAvroDeserializer<T extends SpecificRecord> impleme
         }
     }
 
-    abstract Collection<T> deserializeCollection(byte[] data, Class<? extends T> clazz, Schema schema, SpecificDatumReader<T> datumReader) throws IOException;
+    abstract ArrayList<SpecificRecord> deserializeCollection(byte[] data, Class<? extends SpecificRecord> clazz, Schema schema, SpecificDatumReader<SpecificRecord> datumReader) throws IOException;
 
 
     abstract Decoder getDecoder(Schema schema, InputStream inputStream) throws IOException;

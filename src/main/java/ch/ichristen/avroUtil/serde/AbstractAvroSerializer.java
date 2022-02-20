@@ -12,10 +12,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
+import java.util.*;
 
 @Slf4j
-public abstract class AbstractAvroSerializer<T extends SpecificRecord> implements Serializer<T> {
+public abstract class AbstractAvroSerializer implements Serializer {
 
     private final CompressorFactory compressorFactory;
 
@@ -35,52 +35,68 @@ public abstract class AbstractAvroSerializer<T extends SpecificRecord> implement
      *                                    has occurred.
      */
     @Override
-    public byte[] serialize(final T data) throws SerializationException {
-        byte[] result = null;
+    public byte[] serialize(final Object data) throws SerializationException {
+        if (data == null) {
+            return null;
+        }
+        if (data.getClass().isArray() && SpecificRecord.class.isAssignableFrom(data.getClass().componentType())) {
+            return serializeIterator(((List)Arrays.asList((SpecificRecord[])data)).iterator());
+        }
+        if (SpecificRecord.class.isAssignableFrom(data.getClass())) {
+            return serializeSpecificRecord((SpecificRecord)data);
+        }
+        if (Collection.class.isAssignableFrom(data.getClass())) {
+            return serializeIterator(((Collection)data).iterator());
+        }
+        if (Iterator.class.isAssignableFrom(data.getClass())) {
+            return serializeIterator((Iterator)data);
+        }
+        throw new SerializationException("Unable to serialize object with class " + data.getClass());
+    }
 
-        if (data != null) {
-            log.debug("Avro object = {} : {}", data.getSchema().getFullName(), data);
+    private byte[] serializeSpecificRecord(SpecificRecord data) throws SerializationException {
+        byte[] result;
+        log.debug("Avro object = {} : {}", data.getSchema().getFullName(), data);
 
-            FilterOutputStream compressorOutputStream = null;
-            try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-                compressorOutputStream = (compressorFactory != null) ? compressorFactory.getCompressor(byteArrayOutputStream) : null;
+        FilterOutputStream compressorOutputStream = null;
+        try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            compressorOutputStream = (compressorFactory != null) ? compressorFactory.getCompressor(byteArrayOutputStream) : null;
 
-                final Encoder encoder = getEncoder(data, ((compressorOutputStream != null) ? compressorOutputStream : byteArrayOutputStream));
-                final DatumWriter<T> datumWriter = new SpecificDatumWriter<>(data.getSchema());
-                datumWriter.write(data, encoder);
-                encoder.flush();
-                if (compressorOutputStream != null) {
+            final Encoder encoder = getEncoder(data, ((compressorOutputStream != null) ? compressorOutputStream : byteArrayOutputStream));
+            final DatumWriter<SpecificRecord> datumWriter = new SpecificDatumWriter<>(data.getSchema());
+            datumWriter.write(data, encoder);
+            encoder.flush();
+            if (compressorOutputStream != null) {
+                compressorOutputStream.flush();
+                compressorOutputStream.close();
+            }
+            byteArrayOutputStream.flush();
+            result = byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            log.warn("Issue with serialization", e);
+            if (compressorOutputStream != null) {
+                try {
                     compressorOutputStream.flush();
                     compressorOutputStream.close();
+                } catch (IOException ioe) {
+                    // ignore
                 }
-                byteArrayOutputStream.flush();
-                result = byteArrayOutputStream.toByteArray();
-            } catch (IOException e) {
-                log.warn("Issue with serialization", e);
-                if (compressorOutputStream != null) {
-                    try {
-                        compressorOutputStream.flush();
-                        compressorOutputStream.close();
-                    } catch (IOException ioe) {
-                        // ignore
-                    }
-                }
-                throw new SerializationException("Can't serialize the data = '" + data + "'", e);
             }
+            throw new SerializationException("Can't serialize the data = '" + data + "'", e);
         }
         return result;
     }
 
     @NonNull
-    public byte[] serialize(final Iterator<T> iterator) throws SerializationException {
+    private byte[] serializeIterator(final Iterator<SpecificRecord> iterator) throws SerializationException {
         Encoder encoder = null;
-        DatumWriter<T> datumWriter = null;
+        DatumWriter datumWriter = null;
         FilterOutputStream compressorOutputStream = null;
         OutputStream outputStream = null;
 
         try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             while (iterator.hasNext()) {
-                T data = iterator.next();
+                SpecificRecord data = iterator.next();
                 if (log.isDebugEnabled())
                     log.debug("Avro object = {} : {}", data.getSchema().getFullName(), data);
                 if (encoder == null) {
@@ -137,6 +153,6 @@ public abstract class AbstractAvroSerializer<T extends SpecificRecord> implement
         // overwrite if an end array sequence needs to be inserted into the output stream
     }
 
-    abstract Encoder getEncoder(T data, OutputStream outputStream) throws IOException;
+    abstract Encoder getEncoder(SpecificRecord data, OutputStream outputStream) throws IOException;
 
 }

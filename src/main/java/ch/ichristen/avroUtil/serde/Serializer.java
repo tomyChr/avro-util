@@ -16,6 +16,8 @@
 
 package ch.ichristen.avroUtil.serde;
 
+import org.apache.avro.specific.SpecificRecord;
+
 import java.util.Iterator;
 
 /**
@@ -24,20 +26,13 @@ import java.util.Iterator;
  * @author Björn Beskow
  * @author Thomas Christen
  */
-public interface Serializer<T> {
+public interface Serializer {
 
   /**
    * Serialize object as byte array.
    * @param data the object to serialize
    * @return byte[]
    */
-  byte[] serialize(T data) throws SerializationException;
-
-  /**
-   * Serialize objects as byte array.
-   * @param data the iterator for the objects to serialize
-   * @return byte[]
-   */
-  byte[] serialize(Iterator<T> data) throws SerializationException;
+  byte[] serialize(Object data) throws SerializationException;
 
 }

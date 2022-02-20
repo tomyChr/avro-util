@@ -5,7 +5,6 @@ import ch.ichristen.avroUtil.serde.SerializationException;
 import ch.ichristen.avroUtil.serde.Serializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecord;
-import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -17,8 +16,17 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+
+/**
+ * Abstract class for AVRO environments.
+ *
+ * <p>This class adds support reading and writing SpecificRecord AVRO objects
+ *
+ * @author Thomas Christen
+ * @param <T> the converted object type
+ */
 @Slf4j
-public abstract class AbstractAvroHttpMessageConverter<T extends SpecificRecord> extends AbstractHttpMessageConverter<T> {
+public abstract class AbstractAvroHttpMessageConverter<T extends Object> extends AbstractHttpMessageConverter<T> {
 
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
@@ -32,10 +40,18 @@ public abstract class AbstractAvroHttpMessageConverter<T extends SpecificRecord>
 
     public static final String AVRO_BINARY = APPLICATION + "/" + AVRO_BINARY_SUBTYPE;
 
-    private Serializer<SpecificRecord> serializer;
-    private Deserializer<SpecificRecord> deserializer;
+    private final Serializer serializer;
+    private final Deserializer deserializer;
 
-    public AbstractAvroHttpMessageConverter(Serializer<SpecificRecord> serializer, Deserializer<SpecificRecord> deserializer, MediaType... supportedMediaTypes) {
+
+
+    /**
+     * Create a new AbstractAvroHttpMessageConverter.
+     * @param serializer the configured serializer
+     * @param deserializer the configured deserializer
+     * @param supportedMediaTypes the list of supported media types
+     */
+    public AbstractAvroHttpMessageConverter(Serializer serializer, Deserializer deserializer, MediaType... supportedMediaTypes) {
         super(supportedMediaTypes);
         this.serializer = serializer;
         this.deserializer = deserializer;
@@ -44,12 +60,23 @@ public abstract class AbstractAvroHttpMessageConverter<T extends SpecificRecord>
 
     /**
      * Indicates whether the given class is supported by this converter.
+     *
+     * <p>For a SpecificRecord the class needs to be known. Therefore, only single objects
+     * and array of objects are currently supported (e.g. a collection.class would not
+     * allow to derive the according SpecificRecord. For such cases, the serializer - and
+     * deserializer class both also support Collections through an additional parameter.
+     * Such use would need to be coded manually.
+     *
      * @param clazz the class to test for support
      * @return {@code true} if supported; {@code false} otherwise
      */
     @Override
     protected boolean supports(Class<?> clazz) {
-        return true;
+        if (clazz.isArray()) {
+            return SpecificRecord.class.isAssignableFrom(clazz.componentType());
+        } else {
+            return SpecificRecord.class.isAssignableFrom(clazz);
+        }
     }
 
     /**
@@ -70,6 +97,7 @@ public abstract class AbstractAvroHttpMessageConverter<T extends SpecificRecord>
                 result = (T) deserializer.deserialize((Class<? extends T>) clazz, data);
             } catch (SerializationException e) {
                 log.error(e.getMessage(), e);
+                throw new HttpMessageNotReadableException(e.getMessage(), e, inputMessage);
             }
         }
         return result;
@@ -90,11 +118,9 @@ public abstract class AbstractAvroHttpMessageConverter<T extends SpecificRecord>
             data = serializer.serialize(t);
         } catch (SerializationException e) {
             log.error(e.getMessage(), e);
+            throw new HttpMessageNotWritableException(e.getMessage(), e);
         }
         outputMessage.getBody().write(data);
     }
-
-
-
 
 }

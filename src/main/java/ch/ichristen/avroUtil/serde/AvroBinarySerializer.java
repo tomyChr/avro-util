@@ -8,7 +8,7 @@ import org.apache.avro.specific.SpecificRecord;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class AvroBinarySerializer<T extends SpecificRecord> extends AbstractAvroSerializer<T> {
+public class AvroBinarySerializer extends AbstractAvroSerializer {
 
     public AvroBinarySerializer() {
         super();
@@ -19,7 +19,7 @@ public class AvroBinarySerializer<T extends SpecificRecord> extends AbstractAvro
     }
 
     @Override
-    Encoder getEncoder(T data, OutputStream outputStream) throws IOException {
+    Encoder getEncoder(SpecificRecord data, OutputStream outputStream) throws IOException {
         return EncoderFactory.get().binaryEncoder(outputStream, null);
     }
 
