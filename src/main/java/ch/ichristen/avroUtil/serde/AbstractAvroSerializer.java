@@ -3,6 +3,7 @@ package ch.ichristen.avroUtil.serde;
 import ch.ichristen.avroUtil.serde.compress.CompressorFactory;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.specific.SpecificDatumWriter;

@@ -285,11 +285,11 @@ public class SerdeTest {
             log.error("Exception during serialization of '" + testObjects + "'", e);
         }
 
-        TestObjectParent[] resultObjects = new TestObjectParent[0];
+        TestObjectParent[] resultObjects = null;
         Deserializer deser = deserializerFactory.deserializer(avroFormat, compressorType);
         if (result != null) {
             try {
-                resultObjects = (TestObjectParent[])deser.deserialize(resultObjects.getClass(), result);
+                resultObjects = (TestObjectParent[])deser.deserialize(TestObjectParent[].class, result);
                 log.info("Result from deserializer {}", resultObjects);
             } catch (Exception e) {
                 log.error("Exception during deserialization of '" + result + "'", e);
@@ -352,11 +352,11 @@ public class SerdeTest {
             log.error("Exception during serialization of '" + testObjects + "'", e);
         }
 
-        TestObjectParent[] resultObjects = new TestObjectParent[0];
+        TestObjectParent[] resultObjects = null;
         Deserializer deser = deserializerFactory.deserializer(avroFormat, compressorType);
         if (result != null) {
             try {
-                resultObjects = (TestObjectParent[])deser.deserialize(resultObjects.getClass(), result);
+                resultObjects = (TestObjectParent[])deser.deserialize(TestObjectParent[].class, result);
                 log.info("Result from deserializer {}", resultObjects);
             } catch (Exception e) {
                 log.error("Exception during deserialization of '" + result + "'", e);
