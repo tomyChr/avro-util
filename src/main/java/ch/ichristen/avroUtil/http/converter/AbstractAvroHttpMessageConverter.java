@@ -43,8 +43,6 @@ public abstract class AbstractAvroHttpMessageConverter<T extends Object> extends
     private final Serializer serializer;
     private final Deserializer deserializer;
 
-
-
     /**
      * Create a new AbstractAvroHttpMessageConverter.
      * @param serializer the configured serializer

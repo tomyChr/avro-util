@@ -8,10 +8,7 @@ import org.apache.avro.io.Encoder;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.avro.specific.SpecificRecord;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 
 @Slf4j
@@ -122,6 +119,14 @@ public abstract class AbstractAvroSerializer implements Serializer {
                 outputStream.flush();
                 outputStream.close();
                 log.debug("Serialized Avro object = {}", byteArrayOutputStream);
+                if (Closeable.class.isAssignableFrom(iterator.getClass())) {
+                    try {
+                        ((Closeable) iterator).close();
+                    }
+                    catch (IOException e) {
+                        log.error("Error while closing iterator after serialization.", e);
+                    }
+                }
                 return byteArrayOutputStream.toByteArray();
             } else {
                 log.warn("Can't serialize NULL object. Returning NULL value");
@@ -133,6 +138,7 @@ public abstract class AbstractAvroSerializer implements Serializer {
                 try {
                     compressorOutputStream.flush();
                     compressorOutputStream.close();
+                    if (Closeable.class.isAssignableFrom(iterator.getClass())) ((Closeable) iterator).close();
                 } catch (IOException ioe) {
                     // ignore
                 }
