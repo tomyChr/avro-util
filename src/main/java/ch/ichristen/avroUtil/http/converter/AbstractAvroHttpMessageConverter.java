@@ -63,7 +63,7 @@ public abstract class AbstractAvroHttpMessageConverter<T extends Object> extends
     @Override
     protected boolean supports(Class<?> clazz) {
         if (clazz.isArray()) {
-            return SpecificRecord.class.isAssignableFrom(clazz.componentType());
+            return SpecificRecord.class.isAssignableFrom(clazz.getComponentType());
         } else {
             return SpecificRecord.class.isAssignableFrom(clazz);
         }

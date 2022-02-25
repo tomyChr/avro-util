@@ -37,7 +37,7 @@ public abstract class AbstractAvroSerializer implements Serializer {
         if (data == null) {
             return null;
         }
-        if (data.getClass().isArray() && SpecificRecord.class.isAssignableFrom(data.getClass().componentType())) {
+        if (data.getClass().isArray() && SpecificRecord.class.isAssignableFrom(data.getClass().getComponentType())) {
             return serializeIterator(((List)Arrays.asList((SpecificRecord[])data)).iterator());
         }
         if (SpecificRecord.class.isAssignableFrom(data.getClass())) {

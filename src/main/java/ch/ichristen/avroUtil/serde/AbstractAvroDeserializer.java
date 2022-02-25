@@ -44,8 +44,8 @@ public abstract class AbstractAvroDeserializer implements Deserializer {
         if (clazz == null) {
             throw new SerializationException("Unable to derive SpecificRecord from provided class parameter (null)");
         }
-        if (clazz.isArray() && SpecificRecord.class.isAssignableFrom(clazz.componentType())) {
-            ArrayList arrayList = (ArrayList) deserializeCollection(clazz.componentType(), data);
+        if (clazz.isArray() && SpecificRecord.class.isAssignableFrom(clazz.getComponentType())) {
+            ArrayList arrayList = (ArrayList) deserializeCollection(clazz.getComponentType(), data);
             return arrayList != null ? arrayList.toArray((SpecificRecord[])Array.newInstance(clazz.getComponentType(), arrayList.size())) : null;
         }
         if (SpecificRecord.class.isAssignableFrom(clazz)) {
