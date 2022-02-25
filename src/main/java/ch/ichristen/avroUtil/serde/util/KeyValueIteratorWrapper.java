@@ -1,4 +1,4 @@
-package ch.ichristen.avroUtil.serde;
+package ch.ichristen.avroUtil.serde.util;
 
 import org.apache.kafka.streams.state.KeyValueIterator;
 

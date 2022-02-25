@@ -17,16 +17,20 @@ import org.springframework.http.MediaType;
  */
 public class AvroBinaryHttpMessageConverter<T extends Object> extends AbstractAvroHttpMessageConverter<T> {
 
-    protected static final String AVRO_BINARY_SUBTYPE = "avro";
-    protected static final String AVRO_ANY_BINARY_SUBTYPE = "*+avro";
+    public static final String AVRO_BINARY_SUBTYPE = "avro";
+    public static final String AVRO_ANY_BINARY_SUBTYPE = "*+avro";
     @Deprecated
-    protected static final String AVRO_BINARY_GZIP_SUBTYPE = "avro+gzip";
+    public static final String AVRO_BINARY_GZIP_SUBTYPE = "avro+gzip";
     @Deprecated
-    protected static final String AVRO_BINARY_DEFLATE_SUBTYPE = "avro+deflate";
+    public static final String AVRO_BINARY_DEFLATE_SUBTYPE = "avro+deflate";
 
-    public static final String AVRO_BINARY = APPLICATION + "/" + AVRO_BINARY_SUBTYPE;
-    public static final String AVRO_BINARY_GZIP = APPLICATION + "/" + AVRO_BINARY_GZIP_SUBTYPE;
-    public static final String AVRO_BINARY_DEFLATE = APPLICATION + "/" + AVRO_BINARY_DEFLATE_SUBTYPE;
+    public static final String ACCEPT_AVRO_BINARY = APPLICATION_TYPE + "/" + AVRO_BINARY_SUBTYPE;
+    public static final String ACCEPT_AVRO_BINARY_GZIP = APPLICATION_TYPE + "/" + AVRO_BINARY_GZIP_SUBTYPE;
+    public static final String ACCEPT_AVRO_BINARY_DEFLATE = APPLICATION_TYPE + "/" + AVRO_BINARY_DEFLATE_SUBTYPE;
+
+    public static final MediaType MEDIA_AVRO_BINARY = new MediaType(APPLICATION_TYPE, acceptContentHeader(CompressorType.NONE), DEFAULT_CHARSET);
+    public static final MediaType MEDIA_AVRO_BINARY_GZIP = new MediaType(APPLICATION_TYPE, acceptContentHeader(CompressorType.GZIP), DEFAULT_CHARSET);
+    public static final MediaType MEDIA_AVRO_BINARY_DEFLATE = new MediaType(APPLICATION_TYPE, acceptContentHeader(CompressorType.DEFLATER), DEFAULT_CHARSET);
 
     /**
      * Create a new AvroBinaryHttpMessageConverter with preconfigured serializer and deserializer for binary data exchange.
@@ -35,7 +39,7 @@ public class AvroBinaryHttpMessageConverter<T extends Object> extends AbstractAv
     public AvroBinaryHttpMessageConverter() {
         super(  new AvroSerializerFactory().serializer(AvroFormat.BINARY, CompressorType.NONE),
                 new AvroDeserializerFactory().deserializer(AvroFormat.BINARY, CompressorType.NONE),
-                new MediaType(APPLICATION, acceptContentHeader(CompressorType.NONE), DEFAULT_CHARSET));
+                MEDIA_AVRO_BINARY);
     }
 
     /**
@@ -45,7 +49,7 @@ public class AvroBinaryHttpMessageConverter<T extends Object> extends AbstractAv
     public AvroBinaryHttpMessageConverter(CompressorType compressorType) {
         super(  new AvroSerializerFactory().serializer(AvroFormat.BINARY, compressorType),
                 new AvroDeserializerFactory().deserializer(AvroFormat.BINARY, compressorType),
-                new MediaType(APPLICATION, acceptContentHeader(compressorType), DEFAULT_CHARSET));
+                new MediaType(APPLICATION_TYPE, acceptContentHeader(compressorType), DEFAULT_CHARSET));
     }
 
     private static String acceptContentHeader(CompressorType compressorType) {

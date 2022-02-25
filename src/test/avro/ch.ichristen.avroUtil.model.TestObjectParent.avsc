@@ -15,7 +15,6 @@
     ]
   },
 
-
   {
     "type": "record",
     "namespace": "ch.ichristen.avroUtil.model",
@@ -34,5 +33,25 @@
       }
       }
     ]
+  },
+
+  {
+    "type": "record",
+    "namespace": "ch.ichristen.avroUtil.model",
+    "name": "TestObjectWrapper",
+    "doc": "Test Object for a wrapper",
+    "fields": [
+      {
+        "name": "wrapped",
+        "type": {
+          "type": "array",
+          "items": "ch.ichristen.avroUtil.model.TestObjectParent"
+        }
+      },
+      {"name": "page", "type": "int"},
+      {"name": "size", "type": "int"},
+      {"name": "hasMore", "type": "boolean"}
+    ]
   }
+
 ]

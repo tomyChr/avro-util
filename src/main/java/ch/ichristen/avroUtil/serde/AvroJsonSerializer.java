@@ -1,6 +1,7 @@
 package ch.ichristen.avroUtil.serde;
 
 import ch.ichristen.avroUtil.serde.compress.CompressorFactory;
+import org.apache.avro.generic.GenericContainer;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificRecord;
@@ -20,7 +21,7 @@ public class AvroJsonSerializer extends AbstractAvroSerializer {
     }
 
     @Override
-    Encoder getEncoder(SpecificRecord data, OutputStream outputStream) throws IOException {
+    Encoder getEncoder(GenericContainer data, OutputStream outputStream) throws IOException {
         return EncoderFactory.get().jsonEncoder(data.getSchema(), outputStream);
     }
 

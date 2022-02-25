@@ -4,7 +4,6 @@ import ch.ichristen.avroUtil.serde.AvroDeserializerFactory;
 import ch.ichristen.avroUtil.serde.AvroFormat;
 import ch.ichristen.avroUtil.serde.AvroSerializerFactory;
 import ch.ichristen.avroUtil.serde.compress.CompressorType;
-import org.apache.avro.specific.SpecificRecord;
 import org.springframework.http.MediaType;
 
 /**
@@ -24,10 +23,13 @@ public class AvroJsonHttpMessageConverter<T extends Object> extends AbstractAvro
     @Deprecated
     protected static final String AVRO_JSON_DEFLATE_SUBTYPE = "avro+json+deflate";
 
-    public static final String AVRO_JSON = APPLICATION + "/" + AVRO_JSON_SUBTYPE;
-    public static final String AVRO_JSON_GZIP = APPLICATION + "/" + AVRO_JSON_GZIP_SUBTYPE;
-    public static final String AVRO_JSON_DEFLATE = APPLICATION + "/" + AVRO_JSON_DEFLATE_SUBTYPE;
+    public static final String ACCEPT_AVRO_JSON = APPLICATION_TYPE + "/" + AVRO_JSON_SUBTYPE;
+    public static final String ACCEPT_AVRO_JSON_GZIP = APPLICATION_TYPE + "/" + AVRO_JSON_GZIP_SUBTYPE;
+    public static final String ACCEPT_AVRO_JSON_DEFLATE = APPLICATION_TYPE + "/" + AVRO_JSON_DEFLATE_SUBTYPE;
 
+    public static final MediaType MEDIA_AVRO_JSON = new MediaType(APPLICATION_TYPE, acceptContentHeader(CompressorType.NONE), DEFAULT_CHARSET);
+    public static final MediaType MEDIA_AVRO_JSON_GZIP = new MediaType(APPLICATION_TYPE, acceptContentHeader(CompressorType.GZIP), DEFAULT_CHARSET);
+    public static final MediaType MEDIA_AVRO_JSON_DEFLATE = new MediaType(APPLICATION_TYPE, acceptContentHeader(CompressorType.DEFLATER), DEFAULT_CHARSET);
 
     /**
      * Create a new AvroJsonHttpMessageConverter with preconfigured serializer and deserializer for JSON data exchange.
@@ -36,7 +38,7 @@ public class AvroJsonHttpMessageConverter<T extends Object> extends AbstractAvro
     public AvroJsonHttpMessageConverter() {
         super(  new AvroSerializerFactory().serializer(AvroFormat.JSON, CompressorType.NONE),
                 new AvroDeserializerFactory().deserializer(AvroFormat.JSON, CompressorType.NONE),
-                new MediaType(APPLICATION, acceptContentHeader(CompressorType.NONE), DEFAULT_CHARSET));
+                MEDIA_AVRO_JSON);
     }
 
     /**
@@ -46,7 +48,7 @@ public class AvroJsonHttpMessageConverter<T extends Object> extends AbstractAvro
     public AvroJsonHttpMessageConverter(CompressorType compressorType) {
         super(  new AvroSerializerFactory().serializer(AvroFormat.JSON, compressorType),
                 new AvroDeserializerFactory().deserializer(AvroFormat.JSON, compressorType),
-                new MediaType(APPLICATION, acceptContentHeader(compressorType), DEFAULT_CHARSET));
+                new MediaType(APPLICATION_TYPE, acceptContentHeader(compressorType), DEFAULT_CHARSET));
     }
 
     private static String acceptContentHeader(CompressorType compressorType) {

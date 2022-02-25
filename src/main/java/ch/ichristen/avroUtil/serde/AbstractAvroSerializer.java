@@ -3,7 +3,7 @@ package ch.ichristen.avroUtil.serde;
 import ch.ichristen.avroUtil.serde.compress.CompressorFactory;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.generic.GenericContainer;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.specific.SpecificDatumWriter;
@@ -160,6 +160,6 @@ public abstract class AbstractAvroSerializer implements Serializer {
         // overwrite if an end array sequence needs to be inserted into the output stream
     }
 
-    abstract Encoder getEncoder(SpecificRecord data, OutputStream outputStream) throws IOException;
+    abstract Encoder getEncoder(GenericContainer data, OutputStream outputStream) throws IOException;
 
 }

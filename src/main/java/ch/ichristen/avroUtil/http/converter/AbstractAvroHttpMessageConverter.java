@@ -30,15 +30,7 @@ public abstract class AbstractAvroHttpMessageConverter<T extends Object> extends
 
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
-    protected static final String APPLICATION = "application";
-    protected static final String AVRO_BINARY_SUBTYPE = "avro";
-    protected static final String AVRO_ANY_BINARY_SUBTYPE = "*+avro";
-    @Deprecated
-    protected static final String AVRO_BINARY_GZIP_SUBTYPE = "avro+gzip";
-    @Deprecated
-    protected static final String AVRO_BINARY_DEFLATE_SUBTYPE = "avro+deflate";
-
-    public static final String AVRO_BINARY = APPLICATION + "/" + AVRO_BINARY_SUBTYPE;
+    public static final String APPLICATION_TYPE = "application";
 
     private final Serializer serializer;
     private final Deserializer deserializer;
