@@ -1,6 +1,6 @@
 package ch.ichristen.avroUtil.serde.compress;
 
-import net.jpountz.lz4.LZ4Factory;
+// import net.jpountz.lz4.LZ4Factory;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;
