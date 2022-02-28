@@ -39,7 +39,7 @@ public class AvroBinaryHttpMessageConverter<T extends Object> extends AbstractAv
     public AvroBinaryHttpMessageConverter() {
         super(  new AvroSerializerFactory().serializer(AvroFormat.BINARY, CompressorType.NONE),
                 new AvroDeserializerFactory().deserializer(AvroFormat.BINARY, CompressorType.NONE),
-                MEDIA_AVRO_BINARY);
+                MEDIA_AVRO_BINARY, MEDIA_AVRO_BINARY_GZIP, MEDIA_AVRO_BINARY_DEFLATE);
     }
 
     /**

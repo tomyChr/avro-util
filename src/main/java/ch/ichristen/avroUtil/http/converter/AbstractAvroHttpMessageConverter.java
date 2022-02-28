@@ -12,9 +12,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -47,6 +52,25 @@ public abstract class AbstractAvroHttpMessageConverter<T extends Object> extends
         this.deserializer = deserializer;
     }
 
+    /**
+     * This implementation checks if the given class is supported, and if the supported media types include the given media type.
+     * @param clazz - the class to test for writability
+     * @param mediaType - the media type to write (can be null if not specified); typically the value of an Accept header.
+     * @return true if writable; false otherwise
+     */
+    public boolean canWrite(Class<?> clazz, @Nullable MediaType mediaType) {
+        return supportsWriting(clazz) && this.canWrite(mediaType);
+    }
+
+    protected boolean supportsWriting(Class<?> clazz) {
+        if (clazz.isArray()) {
+            return SpecificRecord.class.isAssignableFrom(clazz.getComponentType());
+        } else {
+            return SpecificRecord.class.isAssignableFrom(clazz) ||
+                   Collection.class.isAssignableFrom(clazz) ||
+                   Iterator.class.isAssignableFrom(clazz) ;
+        }
+    }
 
     /**
      * Indicates whether the given class is supported by this converter.

@@ -210,6 +210,7 @@ public class SerdeTest {
         Serializer ser = serializerFactory.serializer(avroFormat, compressorType);
 
         final ArrayList<TestObjectParent> testObjects = buildTestObjects(3);
+        testObjects.add(null);
 
         byte[] result = null;
         try {

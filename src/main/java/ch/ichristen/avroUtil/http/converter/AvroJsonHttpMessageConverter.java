@@ -38,7 +38,7 @@ public class AvroJsonHttpMessageConverter<T extends Object> extends AbstractAvro
     public AvroJsonHttpMessageConverter() {
         super(  new AvroSerializerFactory().serializer(AvroFormat.JSON, CompressorType.NONE),
                 new AvroDeserializerFactory().deserializer(AvroFormat.JSON, CompressorType.NONE),
-                MEDIA_AVRO_JSON);
+                MEDIA_AVRO_JSON, MEDIA_AVRO_JSON_GZIP, MEDIA_AVRO_JSON_DEFLATE);
     }
 
     /**
