@@ -10,18 +10,18 @@ import org.springframework.http.MediaType;
  * HttpMessageConverter class for AVRO using JSON data exchange.
  *
  * <p>This class adds support reading and writing JSON SpecificRecord AVRO objects
- *
  * @author Thomas Christen
+ * @author Prathamesh Mane
  * @param <T> the converted object type
  */
 public class AvroJsonHttpMessageConverter<T extends Object> extends AbstractAvroHttpMessageConverter<T> {
 
-    protected static final String AVRO_JSON_SUBTYPE = "avro+json";
-    protected static final String AVRO_ANY_JSON_SUBTYPE = "*+avro+json";
+    protected static final String AVRO_JSON_SUBTYPE = "avro-json";
+    protected static final String AVRO_ANY_JSON_SUBTYPE = "*+avro-json";
     @Deprecated
-    protected static final String AVRO_JSON_GZIP_SUBTYPE = "avro+json+gzip";
+    protected static final String AVRO_JSON_GZIP_SUBTYPE = "avro-json+gzip";
     @Deprecated
-    protected static final String AVRO_JSON_DEFLATE_SUBTYPE = "avro+json+deflate";
+    protected static final String AVRO_JSON_DEFLATE_SUBTYPE = "avro-json+deflate";
 
     public static final String ACCEPT_AVRO_JSON = APPLICATION_TYPE + "/" + AVRO_JSON_SUBTYPE;
     public static final String ACCEPT_AVRO_JSON_GZIP = APPLICATION_TYPE + "/" + AVRO_JSON_GZIP_SUBTYPE;
